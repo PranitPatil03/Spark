@@ -1,11 +1,28 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { useTRPC } from "./trpc/client";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 export default function Home() {
   const trpc = useTRPC();
-  const greeting = useQuery(trpc.hello.queryOptions({ text: "world" }));
-  if (!greeting.data) return <div>Loading...</div>;
-  return <div>{greeting.data.greeting}</div>;
+  const invoke = useMutation(
+    trpc.invoke.mutationOptions({
+      onSuccess: () => {
+        toast.message("Background Job Started...");
+      },
+    })
+  );
+
+  return (
+    <div className="p-4 max-w-7xl mx-auto">
+      <Button
+        onClick={() => invoke.mutate({ text: "Pranit" })}
+        disabled={invoke.isPending}
+      >
+        Invoke Background Job
+      </Button>
+    </div>
+  );
 }
