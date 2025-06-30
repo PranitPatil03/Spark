@@ -1,0 +1,17 @@
+# This is a config for E2B sandbox template.
+# You can use template ID (ovvt75yxj7i3f5tvksa1) or template name (spark-nextjs-dev) to create a sandbox:
+
+# Python SDK
+# from e2b import Sandbox, AsyncSandbox
+# sandbox = Sandbox("spark-nextjs-dev") # Sync sandbox
+# sandbox = await AsyncSandbox.create("spark-nextjs-dev") # Async sandbox
+
+# JS SDK
+# import { Sandbox } from 'e2b'
+# const sandbox = await Sandbox.create('spark-nextjs-dev')
+
+team_id = "1d377f19-2dd8-49d1-8716-73d606d6ac63"
+start_cmd = "/compile_page.sh"
+dockerfile = "e2b.Dockerfile"
+template_name = "spark-nextjs-dev"
+template_id = "ovvt75yxj7i3f5tvksa1"
