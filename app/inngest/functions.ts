@@ -5,17 +5,25 @@ export const helloWorld = inngest.createFunction(
   { id: "hello-world" },
   { event: "test/hello.world" },
   async ({ event }) => {
-    const supportAgent = createAgent({
-      model: gemini({ model: "gemini-1.5-flash"}),
-      name: "code-agent",
-      system:
-        "You are an expert next.js developer. You write readable,maintainable code. You write simple next.js and react snippets.",
-    });
+    try {
+      const supportAgent = createAgent({
+        model: gemini({ model: "gemini-1.5-flash"}),
+        name: "code-agent",
+        system:
+          "You are an expert Next.js developer. You write readable, maintainable code. Generate simple, well-commented Next.js and React code snippets based on user requests",
+      });
 
-    const { output } = await supportAgent.run(
-      `Write the follwing snippet :${event.data.value}`
-    );
+      const { output } = await supportAgent.run(
+        `Write the following snippet: ${event.data.value}`
+      );
 
-    return { output };
+      return { output };
+    } catch (error) {
+      console.error('AI agent error:', error);
+      return {
+        output: 'Sorry, I encountered an error while generating the code snippet. Please try again later.',
+        error: true,
+      };
+    }
   }
 );
