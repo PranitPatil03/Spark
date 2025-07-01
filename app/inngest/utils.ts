@@ -9,36 +9,16 @@ export async function getSandbox(sandboxId: string) {
 export function lastAssistantTextMessageContent(result: AgentResult) {
   const lastAssistantTextMessageIndex = result.output.findLastIndex(
     (message) =>
-      message.role === "assistant" ||
-      (message as { role?: string }).role === "model"
+      message.role === "assistant"
   );
 
   const message = result.output[lastAssistantTextMessageIndex] as
     | TextMessage
     | undefined;
 
-    console.log("message",message)
-
-  if (!message?.content) return undefined;
-
-  // OpenAI: string
-  if (typeof message.content === "string") {
-    return message.content;
-  }
-
-  // OpenAI: array of { text }
-  if (Array.isArray(message.content)) {
-    return message.content.map((c) => c.text).join("");
-  }
-
-  // Gemini: { parts: [{ text }] }
-  if (
-    typeof message.content === "object" &&
-    Array.isArray((message.content as { parts?: { text: string }[] }).parts)
-  ) {
-    const parts = (message.content as { parts: { text: string }[] }).parts;
-    return parts.map((p) => p.text).join("");
-  }
-
-  return undefined;
+  return message?.content
+    ? typeof message.content === "string"
+      ? message.content
+      : message.content.map((c) => c.text).join("")
+    : undefined;
 }
