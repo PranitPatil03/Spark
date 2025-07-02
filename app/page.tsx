@@ -38,6 +38,7 @@ export default function Home() {
       <Button
         onClick={() => createProject.mutate({ value: value })}
         disabled={createProject.isPending}
+        className="cursor-pointer"
       >
         Invoke Background Job
       </Button>
