@@ -40,8 +40,13 @@ export default function Home() {
         disabled={createProject.isPending}
         className="cursor-pointer"
       >
-        Invoke Background Job
+        {createProject.isPending ? "Creating Project..." : "Create Project"}
       </Button>
+      {createProject.isPending && (
+        <div className="mt-2 text-gray-500">
+          Creating project, please wait...
+        </div>
+      )}
     </div>
   );
 }
