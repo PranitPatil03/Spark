@@ -2,21 +2,26 @@
 
 import { Button } from "@/components/ui/button";
 import { useTRPC } from "./trpc/client";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter();
   const [value, setValue] = useState("");
 
   const trpc = useTRPC();
-  const { data: messages } = useQuery(trpc.messages.getMany.queryOptions());
 
-  const createMessage = useMutation(
-    trpc.messages.create.mutationOptions({
-      onSuccess: () => {
-        toast.message("Message Created...");
+  const createProject = useMutation(
+    trpc.projects.create.mutationOptions({
+      onSuccess: (data) => {
+        toast.success("Project created");
+        router.push(`/projects/${data.id}`);
+      },
+      onError: () => {
+        toast.error("Error creating project");
       },
     })
   );
@@ -31,12 +36,11 @@ export default function Home() {
         />
       </div>
       <Button
-        onClick={() => createMessage.mutate({ value: value })}
-        disabled={createMessage.isPending}
+        onClick={() => createProject.mutate({ value: value })}
+        disabled={createProject.isPending}
       >
         Invoke Background Job
       </Button>
-      <div>{JSON.stringify(messages)}</div>
     </div>
   );
 }

@@ -1,44 +1,42 @@
-import { PrismaClient, Prisma } from "../lib/generated/prisma";
+import { PrismaClient } from "../lib/generated/prisma";
 
 const prisma = new PrismaClient();
 
-const userData: Prisma.UserCreateInput[] = [
-  {
-    name: "Alice",
-    email: "alice@prisma.io",
-    posts: {
-      create: [
-        {
+async function main() {
+  // Seed a USER message with a fragment
+  await prisma.message.create({
+    data: {
+      content: "Hello, world!",
+      role: "USER",
+      type: "RESULT",
+      fragment: {
+        create: {
           title: "Join the Prisma Discord",
-          content: "https://pris.ly/discord",
-          published: true,
+          files: {
+            "index.js": "console.log('Hello, world!');",
+          },
+          sandboxUrl: "https://sandbox.com",
         },
-        {
-          title: "Prisma on YouTube",
-          content: "https://pris.ly/youtube",
-        },
-      ],
+      },
     },
-  },
-  {
-    name: "Bob",
-    email: "bob@prisma.io",
-    posts: {
-      create: [
-        {
-          title: "Follow Prisma on Twitter",
-          content: "https://www.twitter.com/prisma",
-          published: true,
-        },
-      ],
-    },
-  },
-];
+  });
 
-export async function main() {
-  for (const u of userData) {
-    await prisma.user.create({ data: u });
-  }
+  // Seed an ASSISTANT error message (no fragment)
+  await prisma.message.create({
+    data: {
+      content:
+        "Sorry, I encountered an error while generating the code. Please try again later.",
+      role: "ASSISTANT",
+      type: "ERROR",
+    },
+  });
 }
 
-main();
+main()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

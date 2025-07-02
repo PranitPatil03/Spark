@@ -172,6 +172,7 @@ export const codeAgentFunction = inngest.createFunction(
                 "Sorry, I encountered an error while generating the code. Please try again later.",
               role: "ASSISTANT",
               type: "ERROR",
+              projectId: event.data.projectId,
             },
           });
         }
@@ -181,6 +182,7 @@ export const codeAgentFunction = inngest.createFunction(
             content: result.state.data.summary,
             role: "ASSISTANT",
             type: "RESULT",
+            projectId: event.data.projectId,
             fragment: {
               create: {
                 title: "Fragment",
