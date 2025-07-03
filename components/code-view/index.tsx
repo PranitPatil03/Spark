@@ -1,11 +1,13 @@
+import "./code-theme.css";
+
 import Prism from "prismjs";
 import { useEffect } from "react";
 import "prismjs/components/prism-javascript";
 import "prismjs/components/prism-jsx";
 import "prismjs/components/prism-tsx";
 import "prismjs/components/prism-typescript";
+import MonacoEditor from "@monaco-editor/react";
 
-import "./code-theme.css";
 
 interface Props {
   code: string;
@@ -23,3 +25,28 @@ export const CodeView = ({ code, lang }: Props) => {
     </pre>
   );
 };
+
+
+interface Props {
+  code: string;
+  lang: string;
+  onChange?: (value: string | undefined) => void; // Optional, for editing
+  readOnly?: boolean;
+}
+
+export const MonacoCodeView = ({ code, lang, onChange, readOnly = true }: Props) => (
+  <MonacoEditor
+    height="100%"
+    defaultLanguage={lang}
+    defaultValue={code}
+    theme="solarized-dark"
+    options={{
+      readOnly,
+      minimap: { enabled: false },
+      fontSize: 12,
+      scrollBeyondLastLine: false,
+      wordWrap: "on",
+    }}
+    onChange={onChange}
+  />
+);

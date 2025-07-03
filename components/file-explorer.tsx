@@ -3,7 +3,7 @@ import { useState, useMemo, useCallback, Fragment } from "react";
 
 import { Hint } from "./hints";
 import { Button } from "./ui/button";
-import { CodeView } from "./code-view";
+import { MonacoCodeView } from "./code-view";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -148,7 +148,7 @@ export const FileExplorer = ({ files }: FileExplorerProps) => {
               </Hint>
             </div>
             <div className="flex-1 overflow-auto">
-              <CodeView
+              <MonacoCodeView
                 code={files[selectedFile]}
                 lang={getLanguageFromExtension(selectedFile)}
               />
