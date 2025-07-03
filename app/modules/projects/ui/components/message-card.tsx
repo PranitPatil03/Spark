@@ -1,8 +1,11 @@
-import { Card } from "@/components/ui/card";
-import { Fragment, MessageRole, MessageType } from "@/lib/generated/prisma";
+"use client";
+
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Code2Icon } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import { Fragment, MessageRole, MessageType } from "@/lib/generated/prisma";
 
 interface UserMessageProps {
   content: string;
@@ -75,7 +78,8 @@ const AssistantMessage = ({
       )}
     >
       <div className="flex items-center gap-2 pl-2 mb-2">
-        <span className="text-sm font-medium">Vibe</span>
+        <Image src="/logo.svg" alt="logo" height={65} width={65} />
+        {/* <span className="text-sm font-medium">Vibe</span> */}
         <span className="text-sm text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100">
           {format(createdAt, "HH:mm 'on' MM dd,yyyy")}
         </span>
