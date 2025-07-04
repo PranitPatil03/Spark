@@ -33,7 +33,7 @@ export const TreeView = ({ data, value, onSelect }: TreeViewProps) => {
   return (
     <>
       <SidebarProvider>
-        <Sidebar className="w-full" collapsible="none">
+        <Sidebar className="w-full bg-transparent" collapsible="none">
           <SidebarContent>
             <SidebarGroup>
               <SidebarGroupContent>

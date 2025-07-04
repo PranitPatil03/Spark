@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { format } from "date-fns";
 import { Code2Icon } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Fragment, MessageRole, MessageType } from "@/lib/generated/prisma";
@@ -66,7 +65,6 @@ const AssistantMessage = ({
   fragment,
   type,
   isActiveFragment,
-  createdAt,
   content,
   onFragmentClick,
 }: AssistantMessageProps) => {
@@ -94,12 +92,12 @@ const AssistantMessage = ({
             className="shrink-0 hidden dark:block"
           />
         </>
-        <span className="text-sm text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100">
+        {/* <span className="text-sm text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100">
           {format(createdAt, "HH:mm 'on' MM dd,yyyy")}
-        </span>
+        </span> */}
       </div>
       <div className="pl-8.5 flex flex-col gap-y-4">
-        <span>{content}</span>
+        <span className="">{content}</span>
         {fragment && type === "RESULT" && (
           <FragmentCard
             fragment={fragment}

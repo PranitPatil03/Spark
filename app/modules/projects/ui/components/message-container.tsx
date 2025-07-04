@@ -20,6 +20,7 @@ export const MessagesContainer = ({
   setActiveFragment,
 }: Props) => {
   const bottomRef = useRef<HTMLDivElement>(null);
+  const lastAssistantMessageMessageIdRef = useRef<string | null>("");
 
   const trpc = useTRPC();
   const { data: messages } = useQuery(
@@ -27,12 +28,16 @@ export const MessagesContainer = ({
   );
 
   useEffect(() => {
-    const lastAssistantMessageWithFragment = messages?.findLast(
-      (message) => message.role === "ASSISTANT" && !!message.fragment
+    const lastAssistantMessage = messages?.findLast(
+      (message) => message.role === "ASSISTANT"
     );
 
-    if (lastAssistantMessageWithFragment) {
-      setActiveFragment(lastAssistantMessageWithFragment.fragment);
+    if (
+      lastAssistantMessage?.fragment &&
+      lastAssistantMessage.id !== lastAssistantMessageMessageIdRef.current
+    ) {
+      setActiveFragment(lastAssistantMessage.fragment);
+      lastAssistantMessageMessageIdRef.current = lastAssistantMessage.id;
     }
   }, [messages, setActiveFragment]);
 
@@ -43,24 +48,8 @@ export const MessagesContainer = ({
   const lastMessage = messages?.[messages?.length - 1];
   const isLastMessageUser = lastMessage?.role === "USER";
 
-  // if (Array.isArray(messages) && messages.length === 0) {
-  //   return (
-  //     <>
-  //       <div className="flex flex-col min-h-0 flex-1">
-  //         <div className="flex min-h-0 overflow-y-auto flex-1">
-  //           <div className="pt-2 pr-1 text-gray-500">No messages yet.</div>
-  //         </div>
-  //       </div>
-  //       <div className="relative p-3 pt-1">
-  //         <div className="absolute -top-6 left-0 right-0 h-6 bg-gradient-to-b from-transparent to-background pointer-events-none" />
-  //         <MessageForm projectId={projectId}></MessageForm>
-  //       </div>
-  //     </>
-  //   );
-  // }
-
   return (
-    <>
+    <div className="flex flex-col min-h-0 flex-1 p-1 border rounded-xl">
       <div className="flex flex-col min-h-0 flex-1">
         <div className="flex min-h-0 overflow-y-auto">
           <div className="pt-2 pr-1 w-full">
@@ -81,10 +70,10 @@ export const MessagesContainer = ({
           </div>
         </div>
       </div>
-      <div className="relative p-3 pt-1">
+      <div className="relative p-1 pt-1">
         <div className="absolute -top-6 left-0 right-0 h-6 bg-gradient-to-b from-transparent to-background pointer-events-none" />
         <MessageForm projectId={projectId}></MessageForm>
       </div>
-    </>
+    </div>
   );
 };

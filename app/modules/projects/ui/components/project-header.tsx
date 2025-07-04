@@ -1,88 +1,65 @@
-"use client"
+"use client";
 
-import { useTRPC } from "@/app/trpc/client";
-import { Button } from "@/components/ui/button";
-import {
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuPortal,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuSeparator,
-  DropdownMenuSub,
-  DropdownMenuSubTrigger,
-  DropdownMenu,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { useTheme } from "next-themes";
 import Image from "next/image";
-import Link from "next/link";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { ChevronDownIcon, ChevronLeftIcon, SunMoonIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useTRPC } from "@/app/trpc/client";
+import { useQuery } from "@tanstack/react-query";
+import ThemeToggle from "@/components/ui/theme-toggle";
 
 interface Props {
   projectId: string;
 }
 
 export const ProjectHeader = ({ projectId }: Props) => {
+  const router = useRouter();
   const trpc = useTRPC();
-
-  const { setTheme, theme } = useTheme();
-
-  const { data: project } = useSuspenseQuery(
+  const { data: project, isLoading } = useQuery(
     trpc.projects.getOne.queryOptions({ id: projectId })
   );
 
   return (
-    <>
-      <header className="p-2 flex justify-between items-center border-b">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              className="focus-visible:ring-0 hover:bg-transparent hover:opacity-75 transition-all pl-2!"
-              size="sm"
-              variant="ghost"
-            >
-              <Image src="/logo-2.svg" alt="logo" height={40} width={40} />
-              <p className="text-sm font-medium">{project?.name}</p>
-              <ChevronDownIcon />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent side="bottom" align="start">
-            <DropdownMenuItem asChild>
-              <Link href="/">
-                <ChevronLeftIcon />
-                <span> Go to Dashboard</span>
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator></DropdownMenuSeparator>
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger className="gap-2">
-                <SunMoonIcon className="size-4 text-muted-foreground"></SunMoonIcon>
-                <span>Appearance</span>
-              </DropdownMenuSubTrigger>
-              <DropdownMenuPortal>
-                <DropdownMenuContent>
-                  <DropdownMenuRadioGroup
-                    value={theme}
-                    onValueChange={setTheme}
-                  >
-                    <DropdownMenuRadioItem value="light">
-                      <span>light</span>
-                    </DropdownMenuRadioItem>
-                    <DropdownMenuRadioItem value="dark">
-                      <span>dark</span>
-                    </DropdownMenuRadioItem>
-                    <DropdownMenuRadioItem value="system">
-                      <span>system</span>
-                    </DropdownMenuRadioItem>
-                  </DropdownMenuRadioGroup>
-                </DropdownMenuContent>
-              </DropdownMenuPortal>
-            </DropdownMenuSub>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </header>
-    </>
+    <header className="px-3 py-2 flex items-center justify-between gap-4">
+      <div className="flex items-center gap-4">
+        <div className="flex-shrink-0">
+          <Image
+            src="/logo.svg"
+            alt="spark"
+            width={90}
+            height={90}
+            className="dark:hidden cursor-pointer"
+            onClick={() => router.push("/projects")}
+          />
+          <Image
+            src="/logo-light.svg"
+            alt="spark"
+            width={90}
+            height={90}
+            className="hidden dark:block cursor-pointer"
+            onClick={() => router.push("/projects")}
+          />
+        </div>
+        <nav className="flex items-center text-sm font-medium text-muted-foreground space-x-2">
+          <span
+            className="cursor-pointer hover:underline"
+            onClick={() => router.push("/projects")}
+          >
+            Projects
+          </span>
+          <span className="text-gray-400">/</span>
+          <span className="text-foreground font-semibold">
+            {isLoading ? "Loading..." : project?.name || "Untitled Project"}
+          </span>
+        </nav>
+      </div>
+      <div className="flex items-center gap-2">
+        <button
+          className="px-4 py-2 rounded bg-primary text-primary-foreground font-semibold hover:bg-primary/90 transition"
+          onClick={() => router.push("/pricing")}
+        >
+          Buy
+        </button>
+        <ThemeToggle />
+      </div>
+    </header>
   );
 };
