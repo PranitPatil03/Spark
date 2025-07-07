@@ -3,20 +3,21 @@ import prisma from "@/lib/prisma";
 
 import { inngest } from "@/app/inngest/client";
 import { generateSlug } from "random-word-slugs";
-import { baseProcedure, createTRPCRouter } from "@/app/trpc/init";
+import { createTRPCRouter, protectedProcedure } from "@/app/trpc/init";
 import { TRPCError } from "@trpc/server";
 
 export const projectsRouter = createTRPCRouter({
-  getOne: baseProcedure
+  getOne: protectedProcedure
     .input(
       z.object({
         id: z.string().min(1, { message: "Project ID is required" }),
       })
     )
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
       const existingProject = await prisma.project.findUnique({
         where: {
           id: input.id,
+          userId: ctx.auth.user.id,
         },
       });
 
@@ -29,8 +30,11 @@ export const projectsRouter = createTRPCRouter({
 
       return existingProject;
     }),
-  getMany: baseProcedure.query(async () => {
+  getMany: protectedProcedure.query(async ({ ctx }) => {
     const projects = await prisma.project.findMany({
+      where: {
+        userId: ctx.auth.session.userId,
+      },
       orderBy: {
         createdAt: "desc",
       },
@@ -38,7 +42,7 @@ export const projectsRouter = createTRPCRouter({
 
     return projects;
   }),
-  create: baseProcedure
+  create: protectedProcedure
     .input(
       z.object({
         value: z
@@ -49,9 +53,10 @@ export const projectsRouter = createTRPCRouter({
           }),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const createProject = await prisma.project.create({
         data: {
+          userId: ctx.auth.session.userId,
           name: generateSlug(2, { format: "kebab" }),
           messages: {
             create: {

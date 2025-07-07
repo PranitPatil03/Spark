@@ -27,13 +27,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head />
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        suppressHydrationWarning
-      >
-        <TRPCReactProvider>
+    <TRPCReactProvider>
+      <html lang="en" suppressHydrationWarning>
+        <head />
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          suppressHydrationWarning
+        >
           <ThemeProvider
             attribute="class"
             enableSystem
@@ -43,8 +43,8 @@ export default function RootLayout({
             <Toaster />
             {children}
           </ThemeProvider>
-        </TRPCReactProvider>
-      </body>
-    </html>
+        </body>
+      </html>
+    </TRPCReactProvider>
   );
 }
