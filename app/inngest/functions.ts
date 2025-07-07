@@ -3,8 +3,8 @@ import {
   createAgent,
   createTool,
   createNetwork,
-  openai,
   Tool,
+  anthropic,
 } from "@inngest/agent-kit";
 import { Sandbox } from "@e2b/code-interpreter";
 import { getSandbox, lastAssistantTextMessageContent } from "./utils";
@@ -77,6 +77,14 @@ export const codeAgentFunction = inngest.createFunction(
               const updatedFiles = network.state.data.files || {};
               const sandbox = await getSandbox(sandboxId);
               for (const file of files) {
+                if (
+                  typeof file.path !== "string" ||
+                  typeof file.content !== "string" ||
+                  !file.path
+                ) {
+                  console.error("Invalid file object:", file);
+                  continue;
+                }
                 await sandbox.files.write(file.path, file.content);
                 updatedFiles[file.path] = file.content;
               }
@@ -120,7 +128,11 @@ export const codeAgentFunction = inngest.createFunction(
         name: "code-agent",
         system: PROMPT,
         description: "An expert coding agent",
-        model: openai({ model: "gpt-4.1" }),
+        // model: openai({ model: "gpt-4.1" }),
+        model: anthropic({
+          model: "claude-3-5-sonnet-latest",
+          defaultParameters: { temperature: 0.1, max_tokens: 4096 },
+        }),
         tools: [terminalTool, createOrUpdateFilesTool, readFilesTool],
         lifecycle: {
           onResponse: async ({ result, network }) => {

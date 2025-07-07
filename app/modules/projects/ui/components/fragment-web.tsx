@@ -57,7 +57,7 @@ export const FragmentWeb = ({ data }: Props) => {
       <iframe
         key={fragmentKey}
         className="h-full w-full border rounded-b-xl"
-        sandbox="allow-forms allows-scripts allow-same-origin"
+        sandbox="allow-forms allow-scripts allow-same-origin"
         loading="lazy"
         src={data.sandboxUrl}
       />
